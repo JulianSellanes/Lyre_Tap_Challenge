@@ -8,11 +8,18 @@ public class Arrow : MonoBehaviour
     public Vector3 currentEulerAngles;
     public float z;
 
-    public Transform customPivot;
-
     void Update()
     {
-        //transform.RotateAround(customPivot.position, Vector3.up, 20 * Time.deltaTime);
+        Spin();
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            z = -z;
+        }
+    }
+
+    void Spin()
+    {
         currentEulerAngles += new Vector3(0, 0, z) * Time.deltaTime * rotSpeed;
         transform.localEulerAngles = currentEulerAngles;
     }
