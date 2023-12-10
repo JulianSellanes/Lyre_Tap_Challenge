@@ -4,9 +4,20 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
-    public float rotSpeed = 60f;
-    public Vector3 currentEulerAngles;
-    public float z;
+    public float rotSpeed = 150f;
+    Vector3 currentEulerAngles;
+    float z = -1;
+    Box touchingBox;
+
+    void Start()
+    {
+        int left = Random.Range(0, 2);
+
+        if(left == 0)
+        {
+            z = 1;
+        }
+    }
 
     void Update()
     {
@@ -14,7 +25,17 @@ public class Arrow : MonoBehaviour
 
         if(Input.GetMouseButtonDown(0))
         {
-            z = -z;
+            if (touchingBox != null)
+            {
+                z = -z;
+                GameController.instance.AddTap();
+                touchingBox.DestroyBox();
+            }
+            else
+            {
+                //z = 0;
+                //GameController.instance.GameOver();
+            }
         }
     }
 
@@ -22,5 +43,18 @@ public class Arrow : MonoBehaviour
     {
         currentEulerAngles += new Vector3(0, 0, z) * Time.deltaTime * rotSpeed;
         transform.localEulerAngles = currentEulerAngles;
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Box")
+        {
+            touchingBox = other.GetComponent<Box>();
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        touchingBox = null;
     }
 }

@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
+//using TMPro;
 
-public class UIManager_Game : MonoBehaviour
+public class UIManager_Menu : MonoBehaviour
 {
-    public static UIManager_Game instance;
-
-    public TextMeshProUGUI scoreTxt;
+    public static UIManager_Menu instance;
 
     private void Awake()
     {
@@ -15,5 +13,10 @@ public class UIManager_Game : MonoBehaviour
             instance = this;
         else if (instance != this)
             Destroy(this.gameObject);
+    }
+
+    public void Play()
+    {
+        SceneController.instance.ChangeScene("Game");
     }
 }
