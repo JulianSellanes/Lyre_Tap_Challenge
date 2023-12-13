@@ -24,9 +24,11 @@ public class Box : MonoBehaviour
 
     public void DestroyBox()
     {
-        if(effect == "box")
+        GameController.instance.boxesInScene.Remove(effect);
+
+        if (effect == "box")
         {
-            GameController.instance.GenerateBox("box");
+            GameController.instance.GenerateBox(effect);
         }
         else
         {
@@ -35,6 +37,7 @@ public class Box : MonoBehaviour
 
         Destroy(this.gameObject);
         spawn.haveBox = false;
+        
         GameController.instance.AddScore();
     }
 }

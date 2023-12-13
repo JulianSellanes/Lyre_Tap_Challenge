@@ -4,13 +4,18 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
-    public float rotSpeed = 150f;
+    public float rotSpeed;
+    public float currSpeed;
+    public float oriSpeed = 150f;
     Vector3 currentEulerAngles;
     float z = -1;
     Box touchingBox;
 
     void Start()
     {
+        currSpeed = oriSpeed;
+        rotSpeed = currSpeed;
+
         int left = Random.Range(0, 2);
 
         if(left == 0)

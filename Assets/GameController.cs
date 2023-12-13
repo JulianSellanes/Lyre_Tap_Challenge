@@ -19,7 +19,9 @@ public class GameController : MonoBehaviour
     public int tapsToEffect = 1;
 
     public List<string> possibleEffects;
-    public List<string> currentEffects;
+    public List<string> boxesInScene;
+
+    //public List<string> currentEffects;
 
     private void Awake()
     {
@@ -54,7 +56,7 @@ public class GameController : MonoBehaviour
 
     public void GenerateBox(string _effect)
     {
-        if (safe >= 60)
+        if (boxesInScene.Contains(_effect) || safe >= 60)
             return;
 
         safe++;
@@ -73,6 +75,7 @@ public class GameController : MonoBehaviour
         spawners[random].haveBox = true;
         box.spawn = spawners[random];
         box.Setup(_effect);
+        boxesInScene.Add(_effect);
 
         safe = 0;
     }
@@ -89,11 +92,11 @@ public class GameController : MonoBehaviour
 
         if (taps >= tapsToEffect)
         {
-            GenerateEffect();
+            GenerateBox("slow");
 
             taps = 0;
 
-            int random = Random.Range(4, 11);
+            int random = Random.Range(2, 4);
             tapsToEffect = random;
         }
     }
@@ -111,7 +114,7 @@ public class GameController : MonoBehaviour
             //    GenerateBox();
             //    break;
             case "slow":
-                GenerateBox("slow");
+                //GenerateBox("slow");
                 break;
             default:
                 break;
@@ -134,12 +137,12 @@ public class GameController : MonoBehaviour
 
     IEnumerator RemoveEffect(string _effect)
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(25f);
 
         switch (_effect)
         {
             case "slow":
-                arrow.rotSpeed = 150f;
+                arrow.rotSpeed = arrow.currSpeed;
                 break;
             default:
                 break;
