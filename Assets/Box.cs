@@ -4,17 +4,23 @@ using UnityEngine;
 
 public class Box : MonoBehaviour
 {
+    public enum BoxType
+    {
+        Box,
+        Slow,
+    }
+
     public Spawn spawn;
 
-    public string effect = "box";
+    public BoxType boxType = BoxType.Box;
 
-    public void Setup(string _effect)
+    public void Setup(BoxType _boxType)
     {
-        effect = _effect;
+        boxType = _boxType;
 
-        switch (_effect)
+        switch (boxType)
         {
-            case "slow":
+            case BoxType.Slow:
                 GetComponent<SpriteRenderer>().color = Color.blue;
                 break;
             default:
@@ -24,15 +30,15 @@ public class Box : MonoBehaviour
 
     public void DestroyBox()
     {
-        GameController.instance.boxesInScene.Remove(effect);
+        GameController.instance.boxesInScene.Remove(boxType);
 
-        if (effect == "box")
+        if (boxType == BoxType.Box)
         {
-            GameController.instance.GenerateBox(effect);
+            GameController.instance.GenerateBox(boxType);
         }
         else
         {
-            GameController.instance.ApplyEffect(effect);
+            GameController.instance.ApplyEffect(boxType.ToString());
         }
 
         Destroy(this.gameObject);

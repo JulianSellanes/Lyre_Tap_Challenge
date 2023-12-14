@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -18,8 +17,17 @@ public class GameController : MonoBehaviour
     public int taps;
     public int tapsToEffect = 1;
 
-    public List<string> possibleEffects;
-    public List<string> boxesInScene;
+    public List<Box.BoxType> boxesInScene;
+    public List<EffectInfo> possibleEffects = new List<EffectInfo>();
+
+    //public List<string> possibleEffects;
+    //public List<string> boxesInScene;
+
+                    //name,   
+    //public Dictionary<string, float> possibleEffects;
+
+    //public List<Box.BoxType> boxesInScene;
+
 
     //public List<string> currentEffects;
 
@@ -51,12 +59,12 @@ public class GameController : MonoBehaviour
             }
         }
 
-        GenerateBox("box");
+        GenerateBox(Box.BoxType.Box);
     }
 
-    public void GenerateBox(string _effect)
+    public void GenerateBox(Box.BoxType _boxType)
     {
-        if (boxesInScene.Contains(_effect) || safe >= 60)
+        if (boxesInScene.Contains(_boxType) || safe >= 60)
             return;
 
         safe++;
@@ -67,15 +75,15 @@ public class GameController : MonoBehaviour
             random > 0 && spawners[random - 1] != null && spawners[random - 1].haveBox ||
             random < spawners.Count - 1 && spawners[random + 1] != null && spawners[random + 1].haveBox)
         {
-            GenerateBox(_effect);
+            GenerateBox(_boxType);
             return;
         }
 
         Box box = Instantiate(boxPrefab, spawners[random].transform.position, Quaternion.identity).GetComponent<Box>();
         spawners[random].haveBox = true;
         box.spawn = spawners[random];
-        box.Setup(_effect);
-        boxesInScene.Add(_effect);
+        box.Setup(_boxType);
+        boxesInScene.Add(_boxType);
 
         safe = 0;
     }
@@ -92,7 +100,7 @@ public class GameController : MonoBehaviour
 
         if (taps >= tapsToEffect)
         {
-            GenerateBox("slow");
+            GenerateBox(Box.BoxType.Slow);
 
             taps = 0;
 
@@ -101,7 +109,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void GenerateEffect()
+    /*void GenerateEffect()
     {
         int random = Random.Range(0, possibleEffects.Count - 1);
         string effect = possibleEffects[random];
@@ -115,33 +123,30 @@ public class GameController : MonoBehaviour
             //    break;
             case "slow":
                 //GenerateBox("slow");
-                break;
+                break;x
             default:
                 break;
         }
-    }
+    }*/
 
     public void ApplyEffect(string _effect)
     {
         switch (_effect)
         {
-            case "slow":
+            case "Slow":
                 arrow.rotSpeed = 100f;
+                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.effectName == _effect));
                 break;
             default:
                 break;
         }
-
-        StartCoroutine(RemoveEffect(_effect));
     }
 
-    IEnumerator RemoveEffect(string _effect)
+    public void RemoveEffect(string _effect)
     {
-        yield return new WaitForSeconds(25f);
-
         switch (_effect)
         {
-            case "slow":
+            case "Slow":
                 arrow.rotSpeed = arrow.currSpeed;
                 break;
             default:

@@ -9,11 +9,20 @@ public class UIManager_Game : MonoBehaviour
 
     public TextMeshProUGUI scoreTxt;
 
+    public GameObject effectPrefab;
+    public Transform effectsContent;
+
     private void Awake()
     {
         if (instance == null)
             instance = this;
         else if (instance != this)
             Destroy(this.gameObject);
+    }
+
+    public void InstEffect(EffectInfo _effectInfo)
+    {
+        Effect effect = Instantiate(effectPrefab, effectsContent).GetComponent<Effect>();
+        effect.Setup(_effectInfo);
     }
 }
