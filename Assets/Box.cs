@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum BoxType
+{
+    Box,
+    Slow,
+    Bar,
+}
+
 public class Box : MonoBehaviour
 {
-    public enum BoxType
-    {
-        Box,
-        Slow,
-    }
-
     public Spawn spawn;
 
     public BoxType boxType = BoxType.Box;
@@ -22,6 +23,9 @@ public class Box : MonoBehaviour
         {
             case BoxType.Slow:
                 GetComponent<SpriteRenderer>().color = Color.blue;
+                break;
+            case BoxType.Bar:
+                GetComponent<SpriteRenderer>().color = Color.green;
                 break;
             default:
                 break;
@@ -38,7 +42,7 @@ public class Box : MonoBehaviour
         }
         else
         {
-            GameController.instance.ApplyEffect(boxType.ToString());
+            GameController.instance.ApplyEffect(boxType);
         }
 
         Destroy(this.gameObject);

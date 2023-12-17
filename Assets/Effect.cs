@@ -5,23 +5,22 @@ using UnityEngine.UI;
 
 public class Effect : MonoBehaviour
 {
-    public string effectName;
+    public string name;
     public Image effectImg;
     public Image bgImg;
     public bool timer;
     public float oriDuration;
     public float duration;
+    public BoxType box;
 
     public void Setup(EffectInfo _effectInfo)
     {
-        effectName = _effectInfo.effectName;
-        effectImg.sprite = _effectInfo.effectIcon;
-        bgImg.sprite = _effectInfo.effectIcon;
-        oriDuration = _effectInfo.effectDuration;
-        duration = _effectInfo.effectDuration;
+        effectImg.sprite = _effectInfo.icon;
+        bgImg.sprite = _effectInfo.icon;
+        oriDuration = _effectInfo.duration;
+        duration = _effectInfo.duration;
+        box = _effectInfo.box;
         timer = true;
-
-        //StartCoroutine(Timer());
     }
 
     void Update()
@@ -34,28 +33,8 @@ public class Effect : MonoBehaviour
             if (duration <= 0)
             {
                 timer = false;
-                GameController.instance.RemoveEffect(effectName);
-                Destroy(this.gameObject);
-            }
-        }
-    }
-
-    IEnumerator Timer()
-    {
-        while(duration > 0)
-        {
-            yield return new WaitForSeconds(1f);
-            duration--;
-
-            //update ui
-            effectImg.fillAmount = duration / oriDuration;
-
-            if (duration <= 0)
-            {
-                //restart stats
-                GameController.instance.RemoveEffect(effectName);
-
-                //destroy ui icon
+                GameController.instance.RemoveEffect(box);
+                GameController.instance.activeEffects.Remove(box);
                 Destroy(this.gameObject);
             }
         }

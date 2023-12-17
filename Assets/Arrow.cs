@@ -11,6 +11,8 @@ public class Arrow : MonoBehaviour
     float z = -1;
     Box touchingBox;
 
+    public GameObject greenBar;
+
     void Start()
     {
         currSpeed = oriSpeed;
@@ -18,7 +20,7 @@ public class Arrow : MonoBehaviour
 
         int left = Random.Range(0, 2);
 
-        if(left == 0)
+        if (left == 0)
         {
             z = 1;
         }

@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour
 
     public GameObject boxPrefab;
     public List<Spawn> spawners;
-    int safe = 0;
+    public int safe = 0;
 
     public Arrow arrow;
 
@@ -17,19 +17,9 @@ public class GameController : MonoBehaviour
     public int taps;
     public int tapsToEffect = 1;
 
-    public List<Box.BoxType> boxesInScene;
+    public List<BoxType> boxesInScene;
     public List<EffectInfo> possibleEffects = new List<EffectInfo>();
-
-    //public List<string> possibleEffects;
-    //public List<string> boxesInScene;
-
-                    //name,   
-    //public Dictionary<string, float> possibleEffects;
-
-    //public List<Box.BoxType> boxesInScene;
-
-
-    //public List<string> currentEffects;
+    public List<BoxType> activeEffects;
 
     private void Awake()
     {
@@ -41,12 +31,12 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        if(arrow == null)
+        if (arrow == null)
         {
             arrow = GameObject.Find("Arrow").GetComponent<Arrow>();
         }
 
-        if(spawners.Count == 0)
+        if (spawners.Count == 0)
         {
             Transform spawnersParent = GameObject.Find("Spawners").transform;
 
@@ -59,21 +49,29 @@ public class GameController : MonoBehaviour
             }
         }
 
-        GenerateBox(Box.BoxType.Box);
+        GenerateBox(BoxType.Box);
     }
 
-    public void GenerateBox(Box.BoxType _boxType)
+    public void GenerateBox(BoxType _boxType)
     {
-        if (boxesInScene.Contains(_boxType) || safe >= 60)
+        if (safe >= 60)
+            return;
+
+        if (_boxType != BoxType.Box && boxesInScene.Contains(_boxType))
+            return;
+
+        if (_boxType != BoxType.Box && activeEffects.Contains(_boxType))//activeEffects.Find(item => item.box == _boxType) != null)
             return;
 
         safe++;
 
-        int random = Random.Range(0, spawners.Count - 1);
+        int random = Random.Range(0, spawners.Count);
 
         if (spawners[random] != null && spawners[random].haveBox ||
             random > 0 && spawners[random - 1] != null && spawners[random - 1].haveBox ||
-            random < spawners.Count - 1 && spawners[random + 1] != null && spawners[random + 1].haveBox)
+            random < spawners.Count - 1 && spawners[random + 1] != null && spawners[random + 1].haveBox ||
+            random == 0 && spawners[23] != null && spawners[23].haveBox ||
+            random == 23 && spawners[0] != null && spawners[0].haveBox)
         {
             GenerateBox(_boxType);
             return;
@@ -100,54 +98,47 @@ public class GameController : MonoBehaviour
 
         if (taps >= tapsToEffect)
         {
-            GenerateBox(Box.BoxType.Slow);
+            int random = Random.Range(0, possibleEffects.Count + 1);
+
+            if(random == possibleEffects.Count)
+                GenerateBox(BoxType.Box);
+            else
+                GenerateBox(possibleEffects[random].box);  
 
             taps = 0;
 
-            int random = Random.Range(2, 4);
-            tapsToEffect = random;
+            int randomTap = Random.Range(2, 4);
+            tapsToEffect = randomTap;
         }
     }
 
-    /*void GenerateEffect()
+    public void ApplyEffect(BoxType _box)
     {
-        int random = Random.Range(0, possibleEffects.Count - 1);
-        string effect = possibleEffects[random];
-
-        //currentEffects.Add(effect);
-
-        switch (effect)
+        switch (_box)
         {
-            //case "twoBoxes":
-            //    GenerateBox();
-            //    break;
-            case "slow":
-                //GenerateBox("slow");
-                break;x
-            default:
-                break;
-        }
-    }*/
-
-    public void ApplyEffect(string _effect)
-    {
-        switch (_effect)
-        {
-            case "Slow":
+            case BoxType.Slow:
                 arrow.rotSpeed = 100f;
-                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.effectName == _effect));
+                //UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.effectName == _effect));
+                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                break;
+            case BoxType.Bar:
+                arrow.greenBar.SetActive(true);
+                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             default:
                 break;
         }
     }
 
-    public void RemoveEffect(string _effect)
+    public void RemoveEffect(BoxType _box)
     {
-        switch (_effect)
+        switch (_box)
         {
-            case "Slow":
+            case BoxType.Slow:
                 arrow.rotSpeed = arrow.currSpeed;
+                break;
+            case BoxType.Bar:
+                arrow.greenBar.SetActive(false);
                 break;
             default:
                 break;

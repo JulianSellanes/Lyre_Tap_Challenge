@@ -23,6 +23,7 @@ public class UIManager_Game : MonoBehaviour
     public void InstEffect(EffectInfo _effectInfo)
     {
         Effect effect = Instantiate(effectPrefab, effectsContent).GetComponent<Effect>();
+        GameController.instance.activeEffects.Add(_effectInfo.box);
         effect.Setup(_effectInfo);
     }
 }
