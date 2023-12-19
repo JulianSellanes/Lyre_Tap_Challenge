@@ -7,6 +7,7 @@ public enum BoxType
     Box,
     Slow,
     Bar,
+    DoubleScore,
 }
 
 public class Box : MonoBehaviour
@@ -27,6 +28,9 @@ public class Box : MonoBehaviour
             case BoxType.Bar:
                 GetComponent<SpriteRenderer>().color = Color.green;
                 break;
+            case BoxType.DoubleScore:
+                GetComponent<SpriteRenderer>().color = new Color32(250, 172, 17, 255);
+                break;
             default:
                 break;
         }
@@ -34,7 +38,7 @@ public class Box : MonoBehaviour
 
     public void DestroyBox()
     {
-        GameController.instance.boxesInScene.Remove(boxType);
+        GameController.instance.AddScore();
 
         if (boxType == BoxType.Box)
         {
@@ -45,9 +49,8 @@ public class Box : MonoBehaviour
             GameController.instance.ApplyEffect(boxType);
         }
 
+        GameController.instance.boxesInScene.Remove(boxType);
         Destroy(this.gameObject);
         spawn.haveBox = false;
-        
-        GameController.instance.AddScore();
     }
 }

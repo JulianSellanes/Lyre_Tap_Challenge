@@ -1459,6 +1459,7 @@ MonoBehaviour:
   - {fileID: 1061571483}
   arrow: {fileID: 812148703}
   score: 0
+  scoreMult: 1
   taps: 0
   tapsToEffect: 1
   boxesInScene: 
@@ -1471,6 +1472,11 @@ MonoBehaviour:
     icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
     duration: 10
     box: 2
+  - effect: DoubleScore
+    icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    duration: 10
+    box: 3
+  activeEffects: 
 --- !u!4 &594267352
 Transform:
   m_ObjectHideFlags: 0

@@ -8,11 +8,12 @@ public class GameController : MonoBehaviour
 
     public GameObject boxPrefab;
     public List<Spawn> spawners;
-    public int safe = 0;
+    int safe = 0;
 
     public Arrow arrow;
 
     public int score = 0;
+    public int scoreMult = 1;
 
     public int taps;
     public int tapsToEffect = 1;
@@ -55,7 +56,10 @@ public class GameController : MonoBehaviour
     public void GenerateBox(BoxType _boxType)
     {
         if (safe >= 60)
+        {
+            CheckSafe();
             return;
+        }
 
         if (_boxType != BoxType.Box && boxesInScene.Contains(_boxType))
             return;
@@ -86,14 +90,30 @@ public class GameController : MonoBehaviour
         safe = 0;
     }
 
+    public void CheckSafe()
+    {
+        int numBoxes = 0;
+        foreach (BoxType box in boxesInScene)
+        {
+            if (box == BoxType.Box)
+                numBoxes++;
+        }
+
+        if(numBoxes <= 3)
+            safe = 0;
+    }
+
     public void AddScore()
     {
-        score++;
+        score += (1 * scoreMult);
         UIManager_Game.instance.scoreTxt.text = score.ToString();
     }
 
     public void AddTap()
     {
+        if (safe >= 60)
+            return;
+
         taps++;
 
         if (taps >= tapsToEffect)
@@ -125,6 +145,11 @@ public class GameController : MonoBehaviour
                 arrow.greenBar.SetActive(true);
                 UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
+            case BoxType.DoubleScore:
+                scoreMult = 2;
+                UIManager_Game.instance.scoreTxt.color = new Color32(250, 172, 17, 255);
+                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                break;
             default:
                 break;
         }
@@ -139,6 +164,10 @@ public class GameController : MonoBehaviour
                 break;
             case BoxType.Bar:
                 arrow.greenBar.SetActive(false);
+                break;
+            case BoxType.DoubleScore:
+                scoreMult = 1;
+                UIManager_Game.instance.scoreTxt.color = Color.black;
                 break;
             default:
                 break;
@@ -158,6 +187,7 @@ public class GameController : MonoBehaviour
         }
 
         UIManager_Game.instance.scoreTxt.text = "Game Over";
+        UIManager_Game.instance.scoreTxt.color = Color.black;
 
         StartCoroutine(GameOverTimer(1f));
     }
