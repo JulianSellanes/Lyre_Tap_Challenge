@@ -22,6 +22,8 @@ public class GameController : MonoBehaviour
     public List<EffectInfo> possibleEffects = new List<EffectInfo>();
     public List<BoxType> activeEffects;
 
+    public bool testing;
+
     private void Awake()
     {
         if (instance == null)
@@ -64,7 +66,7 @@ public class GameController : MonoBehaviour
         if (_boxType != BoxType.Box && boxesInScene.Contains(_boxType))
             return;
 
-        if (_boxType != BoxType.Box && activeEffects.Contains(_boxType))//activeEffects.Find(item => item.box == _boxType) != null)
+        if (_boxType != BoxType.Box && activeEffects.Contains(_boxType))
             return;
 
         safe++;
@@ -99,7 +101,7 @@ public class GameController : MonoBehaviour
                 numBoxes++;
         }
 
-        if(numBoxes <= 3)
+        if(numBoxes <= 2)
             safe = 0;
     }
 
@@ -107,6 +109,9 @@ public class GameController : MonoBehaviour
     {
         score += (1 * scoreMult);
         UIManager_Game.instance.scoreTxt.text = score.ToString();
+
+        if (score > PlayerPrefs.GetInt("HighScore"))
+            PlayerPrefs.SetInt("HighScore", score);
     }
 
     public void AddTap()
@@ -127,7 +132,13 @@ public class GameController : MonoBehaviour
 
             taps = 0;
 
-            int randomTap = Random.Range(2, 4);
+            int randomTap;
+
+            if (testing)
+                randomTap = Random.Range(0, 1);
+            else
+                randomTap = Random.Range(3, 6);
+
             tapsToEffect = randomTap;
         }
     }
@@ -138,7 +149,6 @@ public class GameController : MonoBehaviour
         {
             case BoxType.Slow:
                 arrow.rotSpeed = 100f;
-                //UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.effectName == _effect));
                 UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             case BoxType.Bar:
@@ -148,6 +158,29 @@ public class GameController : MonoBehaviour
             case BoxType.DoubleScore:
                 scoreMult = 2;
                 UIManager_Game.instance.scoreTxt.color = new Color32(250, 172, 17, 255);
+                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                break;
+            case BoxType.Grow:
+                arrow.transform.localScale = new Vector3(1.6f, 1.6f, 1f);
+                arrow.GetComponent<BoxCollider2D>().size = new Vector2(0.6f, 1.4f);
+                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                break;
+            case BoxType.Burst:
+                CameraShake.instance.StartShake();
+
+                GameObject[] boxes = GameObject.FindGameObjectsWithTag("Box");
+
+                foreach (GameObject box in boxes)
+                {
+                    if (box.GetComponent<Box>().boxType != BoxType.Burst)
+                        box.GetComponent<Box>().DestroyBox(true);
+                }
+
+                GenerateBox(BoxType.Box);
+                break;
+            case BoxType.Shield:
+                arrow.hasShield = true;
+                arrow.GetComponent<SpriteRenderer>().color = Color.cyan;
                 UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             default:
@@ -169,6 +202,13 @@ public class GameController : MonoBehaviour
                 scoreMult = 1;
                 UIManager_Game.instance.scoreTxt.color = Color.black;
                 break;
+            case BoxType.Grow:
+                arrow.transform.localScale = new Vector3(1f, 1f, 1f);
+                arrow.GetComponent<BoxCollider2D>().size = new Vector2(0.4f, 1.4f);
+                break;
+            case BoxType.Shield:
+                arrow.GetComponent<SpriteRenderer>().color = Color.black;
+                break;
             default:
                 break;
         }
@@ -178,6 +218,7 @@ public class GameController : MonoBehaviour
     {
         Camera.main.GetComponent<Camera>().backgroundColor = Color.red;
         arrow.GetComponent<SpriteRenderer>().color = Color.red;
+        arrow.deathBar.SetActive(true);
 
         GameObject[] boxes = GameObject.FindGameObjectsWithTag("Box");
 

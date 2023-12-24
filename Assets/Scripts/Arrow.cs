@@ -12,6 +12,8 @@ public class Arrow : MonoBehaviour
     Box touchingBox;
 
     public GameObject greenBar;
+    public GameObject deathBar;
+    public bool hasShield;
 
     void Start()
     {
@@ -36,12 +38,23 @@ public class Arrow : MonoBehaviour
             {
                 z = -z;
                 GameController.instance.AddTap();
-                touchingBox.DestroyBox();
+                touchingBox.DestroyBox(false);
             }
             else
             {
-                //z = 0;
-                //GameController.instance.GameOver();
+                if(hasShield)
+                {
+                    CameraShake.instance.StartShake();
+                    hasShield = false;
+                }
+                else
+                {
+                    if(!GameController.instance.testing)
+                    {
+                        z = 0;
+                        GameController.instance.GameOver();
+                    }
+                }
             }
         }
     }

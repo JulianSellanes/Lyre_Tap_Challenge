@@ -8,6 +8,9 @@ public enum BoxType
     Slow,
     Bar,
     DoubleScore,
+    Grow,
+    Burst,
+    Shield,
 }
 
 public class Box : MonoBehaviour
@@ -31,26 +34,34 @@ public class Box : MonoBehaviour
             case BoxType.DoubleScore:
                 GetComponent<SpriteRenderer>().color = new Color32(250, 172, 17, 255);
                 break;
+            case BoxType.Grow:
+                GetComponent<SpriteRenderer>().color = Color.yellow;
+                break;
+            case BoxType.Burst:
+                GetComponent<SpriteRenderer>().color = Color.magenta;
+                break;
+            case BoxType.Shield:
+                GetComponent<SpriteRenderer>().color = Color.cyan;
+                break;
             default:
                 break;
         }
     }
 
-    public void DestroyBox()
+    public void DestroyBox(bool _burst)
     {
         GameController.instance.AddScore();
 
-        if (boxType == BoxType.Box)
-        {
+        if (boxType == BoxType.Box && !_burst)
             GameController.instance.GenerateBox(boxType);
-        }
-        else
-        {
-            GameController.instance.ApplyEffect(boxType);
-        }
 
         GameController.instance.boxesInScene.Remove(boxType);
         Destroy(this.gameObject);
         spawn.haveBox = false;
+
+        if (boxType != BoxType.Box)
+        {
+            GameController.instance.ApplyEffect(boxType);
+        }
     }
 }
