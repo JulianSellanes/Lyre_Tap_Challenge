@@ -9,14 +9,15 @@ public class GameController : MonoBehaviour
     public GameObject boxPrefab;
     public List<Spawn> spawners;
     int safe = 0;
+    public bool gameOver;
 
     public Arrow arrow;
 
-    public int score = 0;
-    public int scoreMult = 1;
+    int score = 0;
+    int scoreMult = 1;
 
-    public int taps;
-    public int tapsToEffect = 1;
+    int taps;
+    int tapsToEffect = 1;
 
     public List<BoxType> boxesInScene;
     public List<EffectInfo> possibleEffects = new List<EffectInfo>();
@@ -41,7 +42,7 @@ public class GameController : MonoBehaviour
 
         if (spawners.Count == 0)
         {
-            Transform spawnersParent = GameObject.Find("Spawners").transform;
+            Transform spawnersParent = GameObject.Find("Spawners2").transform;
 
             if (spawnersParent == null)
                 return;
@@ -57,6 +58,17 @@ public class GameController : MonoBehaviour
 
     public void GenerateBox(BoxType _boxType)
     {
+        /*
+        int startNum = 10;
+        for (int i = 0; i < 2; i++)
+        {
+            Box box = Instantiate(boxPrefab, spawners[startNum + (i * 2)].transform.position, Quaternion.identity).GetComponent<Box>();
+            box.Setup(spawners[startNum + (i * 2)], _boxType);
+            boxesInScene.Add(_boxType);
+        }
+        */
+
+        
         if (safe >= 60)
         {
             CheckSafe();
@@ -72,24 +84,24 @@ public class GameController : MonoBehaviour
         safe++;
 
         int random = Random.Range(0, spawners.Count);
+        int max = spawners.Count - 1;
 
         if (spawners[random] != null && spawners[random].haveBox ||
             random > 0 && spawners[random - 1] != null && spawners[random - 1].haveBox ||
             random < spawners.Count - 1 && spawners[random + 1] != null && spawners[random + 1].haveBox ||
-            random == 0 && spawners[23] != null && spawners[23].haveBox ||
-            random == 23 && spawners[0] != null && spawners[0].haveBox)
+            random == 0 && spawners[max] != null && spawners[max].haveBox ||
+            random == max && spawners[0] != null && spawners[0].haveBox)
         {
             GenerateBox(_boxType);
             return;
         }
 
         Box box = Instantiate(boxPrefab, spawners[random].transform.position, Quaternion.identity).GetComponent<Box>();
-        spawners[random].haveBox = true;
-        box.spawn = spawners[random];
-        box.Setup(_boxType);
+        box.Setup(spawners[random], _boxType);
         boxesInScene.Add(_boxType);
 
         safe = 0;
+        
     }
 
     public void CheckSafe()
@@ -147,8 +159,11 @@ public class GameController : MonoBehaviour
     {
         switch (_box)
         {
+            //150 => 0.2
+            //100 => 0.29
             case BoxType.Slow:
                 arrow.rotSpeed = 100f;
+                //arrow.collisionDuration = 0.29f;
                 UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             case BoxType.Bar:
@@ -162,7 +177,11 @@ public class GameController : MonoBehaviour
                 break;
             case BoxType.Grow:
                 arrow.transform.localScale = new Vector3(1.6f, 1.6f, 1f);
-                arrow.GetComponent<BoxCollider2D>().size = new Vector2(0.6f, 1.4f);
+                //arrow.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -1.14f);
+                //arrow.GetComponent<BoxCollider2D>().size = new Vector2(0.25f, 0.6f);
+
+                arrow.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -1.14f);
+                arrow.GetComponent<BoxCollider2D>().size = new Vector2(0.18f, 0.6f);
                 UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             case BoxType.Burst:
@@ -194,6 +213,7 @@ public class GameController : MonoBehaviour
         {
             case BoxType.Slow:
                 arrow.rotSpeed = arrow.currSpeed;
+                //arrow.collisionDuration = 0.2f;
                 break;
             case BoxType.Bar:
                 arrow.greenBar.SetActive(false);
@@ -204,7 +224,11 @@ public class GameController : MonoBehaviour
                 break;
             case BoxType.Grow:
                 arrow.transform.localScale = new Vector3(1f, 1f, 1f);
-                arrow.GetComponent<BoxCollider2D>().size = new Vector2(0.4f, 1.4f);
+                //arrow.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -1.6f);
+                //arrow.GetComponent<BoxCollider2D>().size = new Vector2(0.4f, 1.4f);
+
+                arrow.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -1.6f);
+                arrow.GetComponent<BoxCollider2D>().size = new Vector2(0.3f, 1.4f);
                 break;
             case BoxType.Shield:
                 arrow.GetComponent<SpriteRenderer>().color = Color.black;
@@ -216,8 +240,11 @@ public class GameController : MonoBehaviour
 
     public void GameOver()
     {
+        gameOver = true;
+
         Camera.main.GetComponent<Camera>().backgroundColor = Color.red;
         arrow.GetComponent<SpriteRenderer>().color = Color.red;
+        arrow.greenBar.SetActive(false);
         arrow.deathBar.SetActive(true);
 
         GameObject[] boxes = GameObject.FindGameObjectsWithTag("Box");
@@ -229,7 +256,7 @@ public class GameController : MonoBehaviour
 
         UIManager_Game.instance.scoreTxt.text = "Game Over";
         UIManager_Game.instance.scoreTxt.color = Color.black;
-
+        
         StartCoroutine(GameOverTimer(1f));
     }
 

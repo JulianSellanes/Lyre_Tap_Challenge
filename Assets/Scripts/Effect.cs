@@ -57,6 +57,9 @@ public class Effect : MonoBehaviour
 
     void Update()
     {
+        if (GameController.instance.gameOver)
+            return;
+
         if(timer && duration != -1)
         {
             duration -= Time.deltaTime;

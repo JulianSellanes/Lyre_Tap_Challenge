@@ -19,10 +19,12 @@ public class Box : MonoBehaviour
 
     public BoxType boxType = BoxType.Box;
 
-    public void Setup(BoxType _boxType)
+    public void Setup(Spawn _spawn, BoxType _boxType)
     {
-        boxType = _boxType;
+        spawn = _spawn;
+        spawn.haveBox = true;
 
+        boxType = _boxType;
         switch (boxType)
         {
             case BoxType.Slow:
