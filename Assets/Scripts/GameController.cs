@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public static GameController instance;
-
     public GameObject boxPrefab;
     public List<Spawn> spawners;
     int safe = 0;
@@ -25,15 +23,19 @@ public class GameController : MonoBehaviour
 
     public bool testing;
 
+    public static GameController instance;
+
     private void Awake()
     {
         if (instance == null)
             instance = this;
-        else if (instance != this)
+        else
             Destroy(this.gameObject);
+
+        //DontDestroyOnLoad(this);
     }
 
-    void Start()
+    private void Start()
     {
         if (arrow == null)
         {
@@ -120,7 +122,7 @@ public class GameController : MonoBehaviour
     public void AddScore()
     {
         score += (1 * scoreMult);
-        UIManager_Game.instance.scoreTxt.text = score.ToString();
+        UIController_Game.instance.scoreTxt.text = score.ToString();
 
         if (score > PlayerPrefs.GetInt("HighScore"))
             PlayerPrefs.SetInt("HighScore", score);
@@ -164,16 +166,16 @@ public class GameController : MonoBehaviour
             case BoxType.Slow:
                 arrow.rotSpeed = 100f;
                 //arrow.collisionDuration = 0.29f;
-                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                UIController_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             case BoxType.Bar:
                 arrow.greenBar.SetActive(true);
-                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                UIController_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             case BoxType.DoubleScore:
                 scoreMult = 2;
-                UIManager_Game.instance.scoreTxt.color = new Color32(250, 172, 17, 255);
-                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                UIController_Game.instance.scoreTxt.color = new Color32(250, 172, 17, 255);
+                UIController_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             case BoxType.Grow:
                 arrow.transform.localScale = new Vector3(1.6f, 1.6f, 1f);
@@ -182,7 +184,7 @@ public class GameController : MonoBehaviour
 
                 arrow.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -1.14f);
                 arrow.GetComponent<BoxCollider2D>().size = new Vector2(0.18f, 0.6f);
-                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                UIController_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             case BoxType.Burst:
                 CameraShake.instance.StartShake();
@@ -200,7 +202,7 @@ public class GameController : MonoBehaviour
             case BoxType.Shield:
                 arrow.hasShield = true;
                 arrow.GetComponent<SpriteRenderer>().color = Color.cyan;
-                UIManager_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                UIController_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             default:
                 break;
@@ -220,7 +222,7 @@ public class GameController : MonoBehaviour
                 break;
             case BoxType.DoubleScore:
                 scoreMult = 1;
-                UIManager_Game.instance.scoreTxt.color = Color.black;
+                UIController_Game.instance.scoreTxt.color = Color.black;
                 break;
             case BoxType.Grow:
                 arrow.transform.localScale = new Vector3(1f, 1f, 1f);
@@ -254,9 +256,12 @@ public class GameController : MonoBehaviour
             box.GetComponent<SpriteRenderer>().color = Color.red;
         }
 
-        UIManager_Game.instance.scoreTxt.text = "Game Over";
-        UIManager_Game.instance.scoreTxt.color = Color.black;
-        
+        UIController_Game.instance.scoreTxt.text = "Game Over";
+        UIController_Game.instance.scoreTxt.color = Color.black;
+
+        AudioController.instance.StopMusic();
+        AudioController.instance.PlaySFX("GameOver");
+
         StartCoroutine(GameOverTimer(1f));
     }
 

@@ -5,15 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
-    public static SceneController instance;
-
     public string scene = "Menu";
+
+    public static SceneController instance;
 
     private void Awake()
     {
         if (instance == null)
             instance = this;
-        else if (instance != this)
+        else
             Destroy(this.gameObject);
 
         DontDestroyOnLoad(this);

@@ -63,6 +63,7 @@ public class Box : MonoBehaviour
 
         if (boxType != BoxType.Box)
         {
+            AudioController.instance.PlaySFX("GetItem");
             GameController.instance.ApplyEffect(boxType);
         }
     }
