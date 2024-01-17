@@ -21,21 +21,20 @@ public class Arrow : MonoBehaviour
     public GameObject deathBar;
     public bool hasShield;
 
-    void Start()
+    private void Start()
     {
         currSpeed = oriSpeed;
         rotSpeed = currSpeed;
 
-        int left = Random.Range(0, 2);
-
-        if (left == 0)
-            z = 1;
+        Setup();
     }
 
-    void Update()
+    private void Update()
     {
-        //if(canSpin)
-            Spin();
+        if (!GameController.instance.playing)
+            return;
+
+        Spin();
 
         /*
         if(timer)
@@ -99,6 +98,19 @@ public class Arrow : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void Setup()
+    {
+        //currentEulerAngles = new Vector3(0, 0, 0);
+        //transform.localEulerAngles = currentEulerAngles;
+
+        int left = Random.Range(0, 2);
+
+        if (left == 0)
+            z = 1;
+        else
+            z = -1;
     }
 
     void Spin()

@@ -7,8 +7,9 @@ public class Effect : MonoBehaviour
 {
     public string name;
 
-    public Image effectImg;
-    public Image bgImg;
+    public Image circleImg;
+    public Image effectBarImg;
+    public Image effectIconImg;
 
     public BoxType boxType;
     
@@ -18,8 +19,8 @@ public class Effect : MonoBehaviour
 
     public void Setup(EffectInfo _effectInfo)
     {
-        effectImg.sprite = _effectInfo.icon;
-        bgImg.sprite = _effectInfo.icon;
+        effectIconImg.sprite = _effectInfo.icon;
+        //bgImg.sprite = _effectInfo.icon;
 
         oriDuration = _effectInfo.duration;
         duration = _effectInfo.duration;
@@ -29,24 +30,24 @@ public class Effect : MonoBehaviour
         switch (boxType)
         {
             case BoxType.Slow:
-                effectImg.color = new Color32(28, 68, 255, 255);
-                bgImg.color = new Color32(38, 38, 154, 255);
+                effectBarImg.color = new Color32(28, 68, 255, 255);
+                circleImg.color = new Color32(38, 38, 154, 255);
                 break;
             case BoxType.Bar:
-                effectImg.color = Color.green;
-                bgImg.color = new Color32(33, 120, 33, 255);
+                effectBarImg.color = Color.green;
+                circleImg.color = new Color32(33, 120, 33, 255);
                 break;
             case BoxType.DoubleScore:
-                effectImg.color = new Color32(250, 172, 17, 255);
-                bgImg.color = new Color32(128, 97, 35, 255);
+                effectBarImg.color = new Color32(250, 172, 17, 255);
+                circleImg.color = new Color32(128, 97, 35, 255);
                 break;
             case BoxType.Grow:
-                effectImg.color = Color.yellow;
-                bgImg.color = new Color32(144, 144, 42, 255);
+                effectBarImg.color = Color.yellow;
+                circleImg.color = new Color32(144, 144, 42, 255);
                 break;
             case BoxType.Shield:
-                effectImg.color = Color.cyan;
-                bgImg.color = new Color32(47, 128, 128, 255);
+                effectBarImg.color = Color.cyan;
+                circleImg.color = new Color32(47, 128, 128, 255);
                 break;
             default:
                 break;
@@ -55,15 +56,15 @@ public class Effect : MonoBehaviour
         timer = true;
     }
 
-    void Update()
+    private void Update()
     {
-        if (GameController.instance.gameOver)
+        if (!GameController.instance.playing)
             return;
 
         if(timer && duration != -1)
         {
             duration -= Time.deltaTime;
-            effectImg.fillAmount = duration / oriDuration;
+            effectBarImg.fillAmount = duration / oriDuration;
 
             if (duration <= 0)
             {

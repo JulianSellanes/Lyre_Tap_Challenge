@@ -18,6 +18,7 @@ public class Box : MonoBehaviour
     public Spawn spawn;
 
     public BoxType boxType = BoxType.Box;
+    public Color boxColor;
 
     public void Setup(Spawn _spawn, BoxType _boxType)
     {
@@ -27,27 +28,32 @@ public class Box : MonoBehaviour
         boxType = _boxType;
         switch (boxType)
         {
+            case BoxType.Box:
+                boxColor = Color.black;
+                break;
             case BoxType.Slow:
-                GetComponent<SpriteRenderer>().color = Color.blue;
+                boxColor = Color.blue;
                 break;
             case BoxType.Bar:
-                GetComponent<SpriteRenderer>().color = Color.green;
+                boxColor = Color.green;
                 break;
             case BoxType.DoubleScore:
-                GetComponent<SpriteRenderer>().color = new Color32(250, 172, 17, 255);
+                boxColor = new Color32(250, 172, 17, 255);
                 break;
             case BoxType.Grow:
-                GetComponent<SpriteRenderer>().color = Color.yellow;
+                boxColor = Color.yellow;
                 break;
             case BoxType.Burst:
-                GetComponent<SpriteRenderer>().color = Color.magenta;
+                boxColor = Color.magenta;
                 break;
             case BoxType.Shield:
-                GetComponent<SpriteRenderer>().color = Color.cyan;
+                boxColor = Color.cyan;
                 break;
             default:
                 break;
         }
+
+        GetComponent<SpriteRenderer>().color = boxColor;
     }
 
     public void DestroyBox(bool _burst)

@@ -30,4 +30,9 @@ public class UIController_Menu : MonoBehaviour
         AudioController.instance.PlaySFX("PressButton");
         SceneController.instance.ChangeScene("Game");
     }
+
+    public void Test()
+    {
+        PlayerPrefs.DeleteKey("Lifes");
+    }
 }

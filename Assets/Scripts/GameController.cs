@@ -7,7 +7,8 @@ public class GameController : MonoBehaviour
     public GameObject boxPrefab;
     public List<Spawn> spawners;
     int safe = 0;
-    public bool gameOver;
+    public bool playing;
+    public bool revived;
 
     public Arrow arrow;
 
@@ -38,9 +39,7 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         if (arrow == null)
-        {
             arrow = GameObject.Find("Arrow").GetComponent<Arrow>();
-        }
 
         if (spawners.Count == 0)
         {
@@ -54,6 +53,8 @@ public class GameController : MonoBehaviour
                 spawners.Add(child.GetComponent<Spawn>());
             }
         }
+
+        playing = true;
 
         GenerateBox(BoxType.Box);
     }
@@ -242,12 +243,17 @@ public class GameController : MonoBehaviour
 
     public void GameOver()
     {
-        gameOver = true;
+        playing = false;
 
         Camera.main.GetComponent<Camera>().backgroundColor = Color.red;
+        UIController_Game.instance.scoreTxt.text = "Game Over";
+        UIController_Game.instance.scoreTxt.color = Color.black;
+
+
         arrow.GetComponent<SpriteRenderer>().color = Color.red;
-        arrow.greenBar.SetActive(false);
+        //arrow.greenBar.SetActive(false);
         arrow.deathBar.SetActive(true);
+
 
         GameObject[] boxes = GameObject.FindGameObjectsWithTag("Box");
 
@@ -256,19 +262,72 @@ public class GameController : MonoBehaviour
             box.GetComponent<SpriteRenderer>().color = Color.red;
         }
 
-        UIController_Game.instance.scoreTxt.text = "Game Over";
-        UIController_Game.instance.scoreTxt.color = Color.black;
 
         AudioController.instance.StopMusic();
         AudioController.instance.PlaySFX("GameOver");
 
-        StartCoroutine(GameOverTimer(1f));
+        if(!revived)
+            StartCoroutine(ReviveTimer(1f));
+        else
+            StartCoroutine(GameOverTimer(1f));
+
+        /*if(PlayerPrefs.GetInt("Lifes") > 0)
+            StartCoroutine(ReviveTimer(1f));
+        else
+            StartCoroutine(GameOverTimer(1f));*/
+    }
+
+    IEnumerator ReviveTimer(float _time)
+    {
+        yield return new WaitForSeconds(_time);
+
+        /*int _myLifes = PlayerPrefs.GetInt("Lifes") - 1;
+        PlayerPrefs.SetInt("Lifes", _myLifes);
+        UIController_Game.instance.extraLifesTxt.text = $"Lifes remaining: {_myLifes}";*/
+
+        UIController_Game.instance.revivePanel.SetActive(true);
+
+
+        Camera.main.GetComponent<Camera>().backgroundColor = Color.white;
+        UIController_Game.instance.scoreTxt.text = score.ToString();
+        if(scoreMult == 1)
+            UIController_Game.instance.scoreTxt.color = Color.black;
+        else
+            UIController_Game.instance.scoreTxt.color = new Color32(250, 172, 17, 255);
+
+
+        arrow.GetComponent<SpriteRenderer>().color = Color.black;
+        //arrow.greenBar.SetActive(false);
+        arrow.deathBar.SetActive(false);
+        arrow.Setup();
+
+
+        GameObject[] boxes = GameObject.FindGameObjectsWithTag("Box");
+
+        foreach (GameObject box in boxes)
+        {
+            box.GetComponent<SpriteRenderer>().color = box.GetComponent<Box>().boxColor;
+        }
     }
 
     IEnumerator GameOverTimer(float _time)
     {
         yield return new WaitForSeconds(_time);
 
+        ReturnToMenu();
+    }
+
+    public void ReturnToMenu()
+    {
         SceneController.instance.ChangeScene("Menu");
+    }
+
+    public void PlayAgain()
+    {
+        playing = true;
+        revived = true;
+
+        AudioController.instance.PlayMusic("GameTheme");
+        UIController_Game.instance.revivePanel2.SetActive(false);
     }
 }
