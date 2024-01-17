@@ -13,6 +13,7 @@ public class UIController_Game : MonoBehaviour
 
     public GameObject revivePanel;
     public GameObject revivePanel2;
+    public GameObject bgPanel;
     public Image adCancelImg;
     public float oriDuration = 6;
     public float duration;

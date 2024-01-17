@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -267,9 +268,9 @@ public class GameController : MonoBehaviour
         AudioController.instance.PlaySFX("GameOver");
 
         if(!revived)
-            StartCoroutine(ReviveTimer(1f));
+            StartCoroutine(ReviveTimer(2f));
         else
-            StartCoroutine(GameOverTimer(1f));
+            StartCoroutine(GameOverTimer(2f));
 
         /*if(PlayerPrefs.GetInt("Lifes") > 0)
             StartCoroutine(ReviveTimer(1f));
@@ -286,14 +287,21 @@ public class GameController : MonoBehaviour
         UIController_Game.instance.extraLifesTxt.text = $"Lifes remaining: {_myLifes}";*/
 
         UIController_Game.instance.revivePanel.SetActive(true);
+        UIController_Game.instance.bgPanel.SetActive(true);
 
 
         Camera.main.GetComponent<Camera>().backgroundColor = Color.white;
         UIController_Game.instance.scoreTxt.text = score.ToString();
-        if(scoreMult == 1)
-            UIController_Game.instance.scoreTxt.color = Color.black;
+
+        Color32 newColor;
+
+        if (scoreMult == 1)
+            newColor = Color.black;
         else
-            UIController_Game.instance.scoreTxt.color = new Color32(250, 172, 17, 255);
+            newColor = new Color32(250, 172, 17, 255);
+
+        newColor.a = 215;
+        UIController_Game.instance.scoreTxt.color = newColor;
 
 
         arrow.GetComponent<SpriteRenderer>().color = Color.black;
@@ -329,5 +337,10 @@ public class GameController : MonoBehaviour
 
         AudioController.instance.PlayMusic("GameTheme");
         UIController_Game.instance.revivePanel2.SetActive(false);
+        UIController_Game.instance.bgPanel.SetActive(false);
+
+        Color32 newColor = UIController_Game.instance.scoreTxt.color;
+        newColor.a = 255;
+        UIController_Game.instance.scoreTxt.color = newColor;
     }
 }
