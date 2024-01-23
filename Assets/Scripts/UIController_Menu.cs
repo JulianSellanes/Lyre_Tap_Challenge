@@ -9,7 +9,7 @@ public class UIController_Menu : MonoBehaviour
 
     public static UIController_Menu instance;
 
-    private void Awake()
+    void Awake()
     {
         if (instance == null)
             instance = this;
@@ -19,7 +19,7 @@ public class UIController_Menu : MonoBehaviour
         //DontDestroyOnLoad(this);
     }
 
-    private void Start()
+    void Start()
     {
         AudioController.instance.PlayMusic("MenuTheme");
         highScoreTxt.text = $"High Score: {PlayerPrefs.GetInt("HighScore")}";

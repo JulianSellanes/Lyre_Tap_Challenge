@@ -12,7 +12,7 @@ public class AudioController : MonoBehaviour
 
     public static AudioController instance;
 
-    private void Awake()
+    void Awake()
     {
         if (instance == null)
             instance = this;

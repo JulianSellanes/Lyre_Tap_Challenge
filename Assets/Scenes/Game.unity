@@ -1820,69 +1820,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &452814446
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 452814449}
-  - component: {fileID: 452814448}
-  - component: {fileID: 452814447}
-  m_Layer: 0
-  m_Name: AdsController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &452814447
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 452814446}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01bbd8e340b0e488ebbaea308b17394c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _androidAdUnitId: Rewarded_Android
-  _iOSAdUnitId: Rewarded_iOS
---- !u!114 &452814448
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 452814446}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21d9c580778dd4a66a4efe364ad2f0f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _androidGameId: 
-  _iOSGameId: 
-  _testMode: 0
-  rewardedAdsButton: {fileID: 452814447}
---- !u!4 &452814449
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 452814446}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &457891780
 GameObject:
   m_ObjectHideFlags: 0
@@ -2324,32 +2261,45 @@ MonoBehaviour:
   playing: 0
   revived: 0
   arrow: {fileID: 812148703}
+  scoreMult: 1
   boxesInScene: 
   possibleEffects:
   - effect: Slow
     icon: {fileID: 21300000, guid: a6d6016d372a149eba812ff05a963403, type: 3}
     duration: 10
     box: 1
+    barColor: {r: 0.10980392, g: 0.26666668, b: 1, a: 1}
+    bgColor: {r: 0.14901961, g: 0.14901961, b: 0.6039216, a: 1}
   - effect: Bar
     icon: {fileID: 21300000, guid: 3a7c471a4c6e1482387bd0e55b7a44ad, type: 3}
     duration: 10
     box: 2
+    barColor: {r: 0, g: 1, b: 0, a: 1}
+    bgColor: {r: 0.12941177, g: 0.47058824, b: 0.12941177, a: 1}
   - effect: DoubleScore
     icon: {fileID: 21300000, guid: ba623db80bd72422cbd757e1fa1f18fa, type: 3}
     duration: 10
     box: 3
+    barColor: {r: 0.98039216, g: 0.6745098, b: 0.06666667, a: 1}
+    bgColor: {r: 0.5019608, g: 0.38039216, b: 0.13725491, a: 1}
   - effect: Grow
     icon: {fileID: 21300000, guid: 2eb80f233f8c84a069029e8d078798e8, type: 3}
     duration: 10
     box: 4
+    barColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    bgColor: {r: 0.5647059, g: 0.5647059, b: 0.16470589, a: 1}
   - effect: Burst
     icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
     duration: 0
     box: 5
+    barColor: {r: 1, g: 0, b: 1, a: 1}
+    bgColor: {r: 0.6037736, g: 0, b: 0.6037736, a: 1}
   - effect: Shield
     icon: {fileID: 21300000, guid: 9c7b3fe55544b4d1384e3d941ae4921d, type: 3}
     duration: -1
     box: 6
+    barColor: {r: 0, g: 1, b: 1, a: 1}
+    bgColor: {r: 0.18431373, g: 0.5019608, b: 0.5019608, a: 1}
   activeEffects: 
   testing: 0
 --- !u!4 &594267352
@@ -2401,8 +2351,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 250}
-  m_SizeDelta: {x: 0, y: -500}
+  m_AnchoredPosition: {x: 0, y: 620}
+  m_SizeDelta: {x: 0, y: -1240}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &599791795
 MonoBehaviour:
@@ -6796,8 +6746,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 452814447}
-        m_TargetAssemblyTypeName: RewardedAdsButton, Assembly-CSharp
+      - m_Target: {fileID: 594267351}
+        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: ShowAd
         m_Mode: 1
         m_Arguments:
@@ -7053,4 +7003,3 @@ SceneRoots:
   - {fileID: 218562157}
   - {fileID: 1109669197}
   - {fileID: 594267352}
-  - {fileID: 452814449}

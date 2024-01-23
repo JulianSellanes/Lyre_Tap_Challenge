@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Effect : MonoBehaviour
 {
-    public string name;
+    public new string name;
 
     public Image circleImg;
     public Image effectBarImg;
@@ -20,13 +20,15 @@ public class Effect : MonoBehaviour
     public void Setup(EffectInfo _effectInfo)
     {
         effectIconImg.sprite = _effectInfo.icon;
-        //bgImg.sprite = _effectInfo.icon;
+        effectBarImg.color = _effectInfo.barColor;
+        circleImg.color = _effectInfo.bgColor;
 
         oriDuration = _effectInfo.duration;
         duration = _effectInfo.duration;
 
         boxType = _effectInfo.box;
-        
+
+        /*
         switch (boxType)
         {
             case BoxType.Slow:
@@ -52,11 +54,12 @@ public class Effect : MonoBehaviour
             default:
                 break;
         }
+        */
 
         timer = true;
     }
 
-    private void Update()
+    void Update()
     {
         if (!GameController.instance.playing)
             return;

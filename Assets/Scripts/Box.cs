@@ -20,12 +20,21 @@ public class Box : MonoBehaviour
     public BoxType boxType = BoxType.Box;
     public Color boxColor;
 
-    public void Setup(Spawn _spawn, BoxType _boxType)
+    public void Setup(Spawn _spawn, BoxType _boxType, EffectInfo _effectInfo)
     {
         spawn = _spawn;
         spawn.haveBox = true;
 
         boxType = _boxType;
+
+        if (_effectInfo == null)
+            boxColor = Color.black;
+        else
+            boxColor = _effectInfo.barColor;
+
+        GetComponent<SpriteRenderer>().color = boxColor;
+
+        /*
         switch (boxType)
         {
             case BoxType.Box:
@@ -51,9 +60,7 @@ public class Box : MonoBehaviour
                 break;
             default:
                 break;
-        }
-
-        GetComponent<SpriteRenderer>().color = boxColor;
+        }*/
     }
 
     public void DestroyBox(bool _burst)

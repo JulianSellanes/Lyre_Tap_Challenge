@@ -21,7 +21,7 @@ public class Arrow : MonoBehaviour
     public GameObject deathBar;
     public bool hasShield;
 
-    private void Start()
+    void Start()
     {
         currSpeed = oriSpeed;
         rotSpeed = currSpeed;
@@ -29,7 +29,7 @@ public class Arrow : MonoBehaviour
         Setup();
     }
 
-    private void Update()
+    void Update()
     {
         if (!GameController.instance.playing)
             return;

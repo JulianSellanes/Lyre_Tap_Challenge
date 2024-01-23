@@ -9,4 +9,6 @@ public class EffectInfo
     public Sprite icon;
     public float duration;
     public BoxType box;
+    public Color barColor;
+    public Color bgColor;
 }

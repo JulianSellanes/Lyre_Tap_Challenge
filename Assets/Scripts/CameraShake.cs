@@ -9,7 +9,7 @@ public class CameraShake : MonoBehaviour
     public float duration = 0.3f;
     public float magnitude = 0.05f;
 
-    private void Awake()
+    void Awake()
     {
         if (instance == null)
             instance = this;

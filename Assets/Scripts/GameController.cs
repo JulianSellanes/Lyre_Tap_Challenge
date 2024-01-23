@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour
     public Arrow arrow;
 
     int score = 0;
-    int scoreMult = 1;
+    public int scoreMult = 1;
 
     int taps;
     int tapsToEffect = 1;
@@ -27,7 +27,7 @@ public class GameController : MonoBehaviour
 
     public static GameController instance;
 
-    private void Awake()
+    void Awake()
     {
         if (instance == null)
             instance = this;
@@ -37,7 +37,7 @@ public class GameController : MonoBehaviour
         //DontDestroyOnLoad(this);
     }
 
-    private void Start()
+    void Start()
     {
         if (arrow == null)
             arrow = GameObject.Find("Arrow").GetComponent<Arrow>();
@@ -100,12 +100,12 @@ public class GameController : MonoBehaviour
             return;
         }
 
+        EffectInfo _effectInfo = possibleEffects.Find(item => item.box == _boxType);
         Box box = Instantiate(boxPrefab, spawners[random].transform.position, Quaternion.identity).GetComponent<Box>();
-        box.Setup(spawners[random], _boxType);
+        box.Setup(spawners[random], _boxType, _effectInfo);
         boxesInScene.Add(_boxType);
 
         safe = 0;
-        
     }
 
     public void CheckSafe()
@@ -161,23 +161,20 @@ public class GameController : MonoBehaviour
 
     public void ApplyEffect(BoxType _box)
     {
+        EffectInfo _effectInfo = possibleEffects.Find(item => item.box == _box);
+
         switch (_box)
         {
-            //150 => 0.2
-            //100 => 0.29
             case BoxType.Slow:
                 arrow.rotSpeed = 100f;
                 //arrow.collisionDuration = 0.29f;
-                UIController_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             case BoxType.Bar:
                 arrow.greenBar.SetActive(true);
-                UIController_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             case BoxType.DoubleScore:
                 scoreMult = 2;
-                UIController_Game.instance.scoreTxt.color = new Color32(250, 172, 17, 255);
-                UIController_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                UIController_Game.instance.scoreTxt.color = _effectInfo.barColor;
                 break;
             case BoxType.Grow:
                 arrow.transform.localScale = new Vector3(1.6f, 1.6f, 1f);
@@ -186,7 +183,6 @@ public class GameController : MonoBehaviour
 
                 arrow.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -1.14f);
                 arrow.GetComponent<BoxCollider2D>().size = new Vector2(0.18f, 0.6f);
-                UIController_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
                 break;
             case BoxType.Burst:
                 CameraShake.instance.StartShake();
@@ -203,12 +199,16 @@ public class GameController : MonoBehaviour
                 break;
             case BoxType.Shield:
                 arrow.hasShield = true;
-                arrow.GetComponent<SpriteRenderer>().color = Color.cyan;
-                UIController_Game.instance.InstEffect(possibleEffects.Find(item => item.box == _box));
+                arrow.GetComponent<SpriteRenderer>().color = _effectInfo.barColor;//Color.cyan;
                 break;
             default:
                 break;
         }
+
+        if (_box == BoxType.Burst)
+            return;
+
+        UIController_Game.instance.InstEffect(_effectInfo);
     }
 
     public void RemoveEffect(BoxType _box)
@@ -244,78 +244,38 @@ public class GameController : MonoBehaviour
 
     public void GameOver()
     {
+        //Game
         playing = false;
+        ChangeSceneToRed(true);
 
-        Camera.main.GetComponent<Camera>().backgroundColor = Color.red;
+        //UI
         UIController_Game.instance.scoreTxt.text = "Game Over";
         UIController_Game.instance.scoreTxt.color = Color.black;
 
-
-        arrow.GetComponent<SpriteRenderer>().color = Color.red;
-        //arrow.greenBar.SetActive(false);
-        arrow.deathBar.SetActive(true);
-
-
-        GameObject[] boxes = GameObject.FindGameObjectsWithTag("Box");
-
-        foreach (GameObject box in boxes)
-        {
-            box.GetComponent<SpriteRenderer>().color = Color.red;
-        }
-
-
+        //Music
         AudioController.instance.StopMusic();
         AudioController.instance.PlaySFX("GameOver");
 
-        if(!revived)
+        //Game Over
+        if (!revived && AdsInitializer.instance.rewardedAdsButton.adReady)
             StartCoroutine(ReviveTimer(2f));
         else
             StartCoroutine(GameOverTimer(2f));
-
-        /*if(PlayerPrefs.GetInt("Lifes") > 0)
-            StartCoroutine(ReviveTimer(1f));
-        else
-            StartCoroutine(GameOverTimer(1f));*/
     }
 
     IEnumerator ReviveTimer(float _time)
     {
         yield return new WaitForSeconds(_time);
 
-        /*int _myLifes = PlayerPrefs.GetInt("Lifes") - 1;
-        PlayerPrefs.SetInt("Lifes", _myLifes);
-        UIController_Game.instance.extraLifesTxt.text = $"Lifes remaining: {_myLifes}";*/
-
+        //Game
         UIController_Game.instance.revivePanel.SetActive(true);
         UIController_Game.instance.bgPanel.SetActive(true);
+        ChangeSceneToRed(false);
 
-
-        Camera.main.GetComponent<Camera>().backgroundColor = Color.white;
+        //UI
         UIController_Game.instance.scoreTxt.text = score.ToString();
-
-        Color32 newColor;
-
-        if (scoreMult == 1)
-            newColor = Color.black;
-        else
-            newColor = new Color32(250, 172, 17, 255);
-
-        newColor.a = 215;
-        UIController_Game.instance.scoreTxt.color = newColor;
-
-
-        arrow.GetComponent<SpriteRenderer>().color = Color.black;
-        //arrow.greenBar.SetActive(false);
-        arrow.deathBar.SetActive(false);
-        arrow.Setup();
-
-
-        GameObject[] boxes = GameObject.FindGameObjectsWithTag("Box");
-
-        foreach (GameObject box in boxes)
-        {
-            box.GetComponent<SpriteRenderer>().color = box.GetComponent<Box>().boxColor;
-        }
+        UIController_Game.instance.ReduceAlphaToScoreText(true);
+        UIController_Game.instance.ReduceAlphaToEffectsIcons(true);
     }
 
     IEnumerator GameOverTimer(float _time)
@@ -325,6 +285,11 @@ public class GameController : MonoBehaviour
         ReturnToMenu();
     }
 
+    public void ShowAd()
+    {
+        AdsInitializer.instance.rewardedAdsButton.ShowAd();
+    }
+
     public void ReturnToMenu()
     {
         SceneController.instance.ChangeScene("Menu");
@@ -332,15 +297,59 @@ public class GameController : MonoBehaviour
 
     public void PlayAgain()
     {
-        playing = true;
-        revived = true;
+        //Arrow
+        arrow.Setup();
 
+        //UI
+        UIController_Game.instance.ReduceAlphaToScoreText(false);
+        UIController_Game.instance.ReduceAlphaToEffectsIcons(false);
+
+        //Music
         AudioController.instance.PlayMusic("GameTheme");
+
+        //Game
         UIController_Game.instance.revivePanel2.SetActive(false);
         UIController_Game.instance.bgPanel.SetActive(false);
 
-        Color32 newColor = UIController_Game.instance.scoreTxt.color;
-        newColor.a = 255;
-        UIController_Game.instance.scoreTxt.color = newColor;
+        playing = true;
+        revived = true;
+    }
+
+    public void ChangeSceneToRed(bool _change)
+    {
+        if(_change)
+        {
+            //Camera
+            Camera.main.GetComponent<Camera>().backgroundColor = Color.red;
+
+            //Arrow
+            arrow.GetComponent<SpriteRenderer>().color = Color.red;
+            arrow.deathBar.SetActive(true);
+
+            //Boxes
+            GameObject[] boxes1 = GameObject.FindGameObjectsWithTag("Box");
+
+            foreach (GameObject box in boxes1)
+            {
+                box.GetComponent<SpriteRenderer>().color = Color.red;
+            }
+
+            return;
+        }
+
+        //Camera
+        Camera.main.GetComponent<Camera>().backgroundColor = Color.white;
+
+        //Arrow
+        arrow.GetComponent<SpriteRenderer>().color = Color.black;
+        arrow.deathBar.SetActive(false);
+
+        //Boxes
+        GameObject[] boxes2 = GameObject.FindGameObjectsWithTag("Box");
+
+        foreach (GameObject box in boxes2)
+        {
+            box.GetComponent<SpriteRenderer>().color = box.GetComponent<Box>().boxColor;
+        }
     }
 }
