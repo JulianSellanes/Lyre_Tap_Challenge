@@ -1,5 +1,4 @@
 # Lyre_Tap_Challenge
-
 Lyre is a casual game where you have to tap just when the arrow points to a cube, it sounds easy... but if you miss even for a second, you lose
 
 How to play:
