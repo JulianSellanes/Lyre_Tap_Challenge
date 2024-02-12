@@ -8,3 +8,5 @@ How to play:
 - You add points for each tap
 - There are different power-ups to help you go further
 - Time and patience is what you will need to play
+
+Google Play: https://play.google.com/store/apps/details?id=com.JotaGameZStudios.LyreTap&pcampaignid=web_share
