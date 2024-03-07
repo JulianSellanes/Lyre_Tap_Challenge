@@ -63,6 +63,8 @@ public class RewardedAdsButton : MonoBehaviour, IUnityAdsLoadListener, IUnityAds
             // Grant a reward.
             UIController_Game.instance.revivePanel.SetActive(false);
             UIController_Game.instance.revivePanel2.SetActive(true);
+            GameController.instance.timeLeft += 10;
+            UIController_Game.instance.UpdateTimer();
             adReady = false;
 
             //Debug.Log("Loading Ad: " + _adUnitId);

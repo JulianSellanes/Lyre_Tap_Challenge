@@ -65,6 +65,9 @@ public class Box : MonoBehaviour
 
     public void DestroyBox(bool _burst)
     {
+        GameController.instance.timeLeft += 1.5f;
+        UIController_Game.instance.UpdateTimer();
+
         GameController.instance.AddScore();
 
         if (boxType == BoxType.Box && !_burst)

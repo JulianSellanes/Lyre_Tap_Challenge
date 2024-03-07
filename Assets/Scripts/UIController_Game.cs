@@ -6,6 +6,7 @@ using TMPro;
 
 public class UIController_Game : MonoBehaviour
 {
+    public TextMeshProUGUI timerTxt;
     public TextMeshProUGUI scoreTxt;
 
     public GameObject effectPrefab;
@@ -48,6 +49,17 @@ public class UIController_Game : MonoBehaviour
         {
             GameController.instance.ReturnToMenu();
         }
+    }
+
+    public void UpdateTimer()
+    {
+        float _time = GameController.instance.timeLeft;
+        _time += 1;
+
+        float mins = Mathf.FloorToInt(_time / 60);
+        float secs = Mathf.FloorToInt(_time % 60);
+
+        timerTxt.text = string.Format("{0:00} : {1:00}", mins, secs);
     }
 
     public void InstEffect(EffectInfo _effectInfo)

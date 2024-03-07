@@ -13,6 +13,8 @@ public class GameController : MonoBehaviour
 
     public Arrow arrow;
 
+    public float timeLeft = 0;
+
     int score = 0;
     public int scoreMult = 1;
 
@@ -55,9 +57,27 @@ public class GameController : MonoBehaviour
             }
         }
 
+        timeLeft = 10;
         playing = true;
 
         GenerateBox(BoxType.Box);
+    }
+
+    void Update()
+    {
+        if (!playing)
+            return;
+
+        if(timeLeft > 0)
+        {
+            timeLeft -= Time.deltaTime;
+            UIController_Game.instance.UpdateTimer();
+        }
+        else
+        {
+            timeLeft = 0;
+            GameOver();
+        }
     }
 
     public void GenerateBox(BoxType _boxType)
@@ -167,6 +187,7 @@ public class GameController : MonoBehaviour
         {
             case BoxType.Slow:
                 arrow.rotSpeed = 100f;
+                timeLeft += 5f;
                 //arrow.collisionDuration = 0.29f;
                 break;
             case BoxType.Bar:
@@ -341,7 +362,11 @@ public class GameController : MonoBehaviour
         Camera.main.GetComponent<Camera>().backgroundColor = Color.white;
 
         //Arrow
-        arrow.GetComponent<SpriteRenderer>().color = Color.black;
+        if(arrow.hasShield)
+            arrow.GetComponent<SpriteRenderer>().color = Color.cyan;
+        else
+            arrow.GetComponent<SpriteRenderer>().color = Color.black;
+
         arrow.deathBar.SetActive(false);
 
         //Boxes
